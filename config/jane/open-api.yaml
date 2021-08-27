@@ -1,0 +1,859 @@
+openapi: 3.0.1
+info:
+  title: ExtraHop Reveal(x) 360 API
+  description: ''
+  version: 8.5.0
+externalDocs:
+  description: Find out more about Swagger
+  url: https://docs.extrahop.com/current/rx360-rest-api
+servers:
+  - url: https://{customerId}.api.cloud.extrahop.com/api/v1
+    variables:
+      customerId:
+        default: demo
+        description: Customer ID provided by ExtraHop
+tags:
+  - name: activitymap
+  - name: alert
+  - name: analysispriority
+  - name: application
+  - name: bundle
+  - name: dashboard
+    description: Dashboards are built-in or customized views of your ExtraHop metrics information.
+  - name: detection
+    description: The Detections class enables you to retrieve detections that have been identified by the ExtraHop system.
+  - name: device
+    description: Devices are objects on your network that have been identified and classified by your ExtraHop system.
+  - name: devicegroup
+    description: Device groups can be either static or dynamic.
+  - name: exclusioninterval
+  - name: metrics
+  - name: network
+    description: Networks are correlated to the network interface card that receives input from all of the objects identified by the ExtraHop system.
+  - name: networklocality
+  - name: observation
+    description: An observation associates the IP address of a device on the ExtraHop system with an IP address outside of your network.
+  - name: packetsearch
+  - name: pairing
+  - name: report
+  - name: software
+  - name: tag
+  - name: threatcollection
+  - name: trigger
+  - name: vlan
+    description: Virtual LANs are logical groupings of traffic or devices on the network.
+  - name: watchlist
+security:
+  - oauth:
+      - auth
+paths:
+  /activitymaps:
+    get:
+      tags:
+        - activitymap
+      summary: Retrieve all activity maps
+      operationId: getActivityMaps
+      responses:
+        200:
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/ActivityMap'
+  /dashboards:
+    get:
+      tags:
+        - dashboard
+      summary: Retrieve all dashboards
+      operationId: getDashboards
+      responses:
+        200:
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Dashboard'
+  /dashboards/{id}:
+    get:
+      tags:
+        - dashboard
+      summary: Retrieve a specific dashboard
+      operationId: getDashboard
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        200:
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Dashboard'
+  /detections:
+    get:
+      tags:
+        - detection
+      summary: Retrieve all detections
+      operationId: getDetections
+      parameters:
+        - name: limit
+          in: query
+          schema:
+            type: number
+      responses:
+        200:
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Detection'
+  /detections/{id}:
+    get:
+      tags:
+        - detection
+      summary: Retrieve a specific detection
+      operationId: getDetection
+      parameters:
+        - name: id
+          in: path
+          description: ID of detection to retrieve
+          required: true
+          schema:
+            type: integer
+      responses:
+        200:
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Detection'
+  /detections/formats:
+    get:
+      tags:
+        - detection
+      summary: Retrieve all detection formats
+      operationId: getDetectionFormats
+      responses:
+        200:
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/DetectionFormat'
+  /detections/rules/hiding:
+    get:
+      tags:
+        - detection
+      summary: Retrieve all detection hiding rules.
+      operationId: getDetectionRulesHiding
+      responses:
+        200:
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/DetectionRulesHiding'
+  /devicegroups:
+    get:
+      tags:
+        - devicegroup
+      summary: Retrieve all device groups
+      operationId: getDeviceGroups
+      parameters:
+        - name: since
+          description: Only return device groups that were modified after this time, expressed in milliseconds since the epoch.
+          in: query
+          schema:
+            type: integer
+        - name: name
+          description: The Regex search value to filter the device groups by name.
+          in: query
+          schema:
+            type: string
+        - name: type
+          description: Only return device groups of the specified type
+          in: query
+          schema:
+            type: string
+            enum:
+              - user_created
+              - built_in
+              - all
+      responses:
+        200:
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/DeviceGroup'
+  /devicegroups/{id}/devices:
+    get:
+      tags:
+        - devicegroup
+      summary: Retrieve all devices in the device group that are active within a specific time window.
+      operationId: getDeviceGroupDevices
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+        - name: active_from
+          in: query
+          schema:
+            type: number
+        - name: active_until
+          in: query
+          schema:
+            type: number
+        - name: limit
+          in: query
+          schema:
+            type: number
+        - name: offset
+          in: query
+          schema:
+            type: number
+      responses:
+        200:
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Device'
+  /devices:
+    get:
+      tags:
+        - device
+      summary: Retrieve all devices that were active within a specific time period.
+      operationId: getDevices
+      parameters:
+        - name: active_from
+          in: query
+          schema:
+            type: number
+        - name: active_until
+          in: query
+          schema:
+            type: number
+        - name: limit
+          in: query
+          schema:
+            type: integer
+        - name: offset
+          in: query
+          schema:
+            type: integer
+        - name: search_type
+          in: query
+          schema:
+            type: string
+        - name: value
+          in: query
+          schema:
+            type: string
+      responses:
+        200:
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Device'
+  /devices/{id}:
+    get:
+      tags:
+        - device
+      summary: Retrieve a specific device
+      operationId: getDevice
+      parameters:
+        - name: id
+          in: path
+          description: ID of device to retrieve
+          required: true
+          schema:
+            type: integer
+      responses:
+        200:
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Device'
+    patch:
+      tags:
+        - device
+      summary: Update an existing device
+      operationId: updateDevice
+      parameters:
+        - name: id
+          in: path
+          description: ID of device to update
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Device'
+      responses:
+        200:
+          description: Success
+  /devices/{id}/software:
+    get:
+      tags:
+        - device
+      summary: Get all identified software on device
+      operationId: getDeviceSoftware
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+        - name: from
+          description: Returns software that was observed on the device after the specified date, expressed in milliseconds since the epoch.
+          in: query
+          schema:
+            type: integer
+        - name: until
+          description: Returns software that was observed on the device before the specified date, expressed in milliseconds since the epoch.
+          in: query
+          schema:
+            type: integer
+      responses:
+        200:
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Software'
+  /networks:
+    get:
+      tags:
+        - network
+      summary: Retrieve all networks
+      operationId: getNetworks
+      responses:
+        200:
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Network'
+  /networks/{id}:
+    get:
+      tags:
+        - network
+      summary: Retrieve specific network
+      operationId: getNetwork
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        200:
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Network'
+  /software:
+    get:
+      tags:
+        - software
+      summary: Retrieve software observed by the ExtraHop system.
+      operationId: getAllSoftware
+      parameters:
+        - name: software_type
+          in: query
+          schema:
+            type: string
+        - name: name
+          in: query
+          schema:
+            type: string
+        - name: version
+          in: query
+          schema:
+            type: string
+      responses:
+        200:
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Software'
+  /software/{id}:
+    get:
+      tags:
+        - software
+      summary: Retrieve software observed by the ExtraHop system by ID.
+      operationId: getSoftware
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        200:
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Software'
+  /vlans:
+    get:
+      tags:
+        - vlan
+      summary: Retrieve all VLANs
+      operationId: getVlans
+      responses:
+        200:
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Vlan'
+  /vlans/{id}:
+    get:
+      tags:
+        - vlan
+      summary: Retrieve a specific VLAN
+      operationId: getVlan
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        200:
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Vlan'
+components:
+  schemas:
+    ActivityMap:
+      type: object
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+          nullable: true
+        description:
+          type: string
+          nullable: true
+        mode:
+          type: string
+          nullable: true
+        owner:
+          type: string
+          nullable: true
+        rights:
+          type: array
+          items:
+            type: string
+        short_code:
+          type: string
+          nullable: true
+        show_alert_status:
+          type: boolean
+        walks:
+          type: array
+          items:
+            type: string
+        weighting:
+          type: string
+          nullable: true
+        mod_time:
+          type: integer
+    Dashboard:
+      type: object
+      properties:
+        id:
+          type: integer
+        author:
+          type: string
+          nullable: true
+        comment:
+          type: string
+          nullable: true
+        name:
+          type: string
+          nullable: true
+        owner:
+          type: string
+          nullable: true
+        rights:
+          type: array
+          items:
+            type: string
+        short_code:
+          type: string
+          nullable: true
+        type:
+          type: string
+          nullable: true
+        mod_time:
+          type: integer
+    Detection:
+      type: object
+      properties:
+        id:
+          type: integer
+        appliance_id:
+          type: integer
+        assignee:
+          type: string
+          nullable: true
+        categories:
+          type: array
+          items:
+            type: string
+        description:
+          type: string
+        end_time:
+          type: integer
+        is_user_created:
+          type: boolean
+        mitre_tactics:
+          type: array
+          items:
+            type: string
+        mitre_techniques:
+          type: array
+          items:
+            type: string
+        participants:
+          type: array
+          items:
+            type: string
+        properties:
+          type: array
+          items:
+            type: string
+        resolution:
+          type: string
+          nullable: true
+        risk_score:
+          type: integer
+        status:
+          type: string
+          nullable: true
+        ticket_id:
+          type: string
+          nullable: true
+        ticket_url:
+          type: string
+          nullable: true
+        title:
+          type: string
+          nullable: true
+        type:
+          type: string
+          nullable: true
+        start_time:
+          type: integer
+          nullable: true
+        update_time:
+          type: integer
+          nullable: true
+    DetectionFormat:
+      type: object
+      properties:
+        author:
+          type: string
+          nullable: true
+        display_name:
+          type: string
+          nullable: true
+        is_user_created:
+          type: boolean
+        mitre_categories:
+          type: array
+          items:
+            type: string
+        properties:
+          type: array
+          items:
+            type: string
+        type:
+          type: string
+          nullable: true
+    DetectionRulesHiding:
+      type: object
+      properties:
+        id:
+          type: string
+        author:
+          type: string
+          nullable: true
+        description:
+          type: string
+          nullable: true
+        detection_type:
+          type: string
+          nullable: true
+        detections_hidden:
+          type: integer
+        enabled:
+          type: boolean
+        hide_past_detections:
+          type: boolean
+        offender:
+          type: array
+          items:
+            type: string
+        victim:
+          type: array
+          items:
+            type: string
+        expiration:
+          type: integer
+          nullable: true
+        create_time:
+          type: integer
+          nullable: true
+    Device:
+      type: object
+      properties:
+        id:
+          type: integer
+        activity:
+          type: array
+          items:
+            type: string
+        analysis:
+          type: string
+          nullable: true
+        analysis_level:
+          type: integer
+          nullable: true
+        auto_role:
+          type: string
+          nullable: true
+        cdp_name:
+          type: string
+          nullable: true
+        cloud_account:
+          type: string
+          nullable: true
+        cloud_instance_id:
+          type: string
+          nullable: true
+        cloud_instance_name:
+          type: string
+          nullable: true
+        cloud_instance_type:
+          type: string
+          nullable: true
+        critical:
+          type: boolean
+          nullable: true
+        custom_name:
+          type: string
+          nullable: true
+        custom_type:
+          type: string
+          nullable: true
+        default_name:
+          type: string
+          nullable: true
+        description:
+          type: string
+          nullable: true
+        device_class:
+          type: string
+          nullable: true
+        dhcp_name:
+          type: string
+          nullable: true
+        discover_time:
+          type: integer
+        discovery_id:
+          type: string
+        display_name:
+          type: string
+          nullable: true
+        dns_name:
+          type: string
+          nullable: true
+        extrahop_id:
+          type: string
+        ipaddr4:
+          type: string
+          nullable: true
+        ipaddr6:
+          type: string
+          nullable: true
+        is_l3:
+          type: boolean
+        last_seen_time:
+          type: integer
+          nullable: true
+        macaddr:
+          type: string
+          nullable: true
+        mod_time:
+          type: integer
+        model:
+          type: string
+          nullable: true
+        netbios_name:
+          type: string
+          nullable: true
+        node_id:
+          type: integer
+        on_watchlist:
+          type: boolean
+        parent_id:
+          type: integer
+          nullable: true
+        role:
+          type: string
+          nullable: true
+        subnet_id:
+          type: string
+          nullable: true
+        user_mod_time:
+          type: integer
+          nullable: true
+        vendor:
+          type: string
+          nullable: true
+        vlanid:
+          type: integer
+          nullable: true
+        vpc_id:
+          type: string
+          nullable: true
+    DeviceGroup:
+      type: object
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+          nullable: true
+        description:
+          type: string
+          nullable: true
+        field:
+          type: string
+          nullable: true
+        value:
+          type: string
+          nullable: true
+        filter:
+          type: array
+          items:
+            type: string
+        built_in:
+          type: boolean
+        dynamic:
+          type: boolean
+        include_custom_devices:
+          type: boolean
+        mod_time:
+          type: integer
+    Network:
+      type: object
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+          nullable: true
+        description:
+          type: string
+          nullable: true
+        appliance_uuid:
+          type: string
+          nullable: true
+        idle:
+          type: boolean
+        node_id:
+          type: integer
+        mod_time:
+          type: integer
+    Software:
+      type: object
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+          nullable: true
+        description:
+          type: string
+          nullable: true
+        version:
+          type: string
+          nullable: true
+        software_type:
+          type: string
+          nullable: true
+    Vlan:
+      type: object
+      properties:
+        id:
+          type: integer
+        description:
+          type: string
+          nullable: true
+        name:
+          type: string
+          nullable: true
+        vlanid:
+          type: integer
+        network_id:
+          type: integer
+          nullable: true
+        node_id:
+          type: integer
+          nullable: true
+        mod_time:
+          type: integer
+          nullable: true
+  securitySchemes:
+    oauth:
+      type: oauth2
+      flows:
+        clientCredentials:
+          tokenUrl: /oauth2/token
+          scopes:
+            auth: Authenticated endpoint

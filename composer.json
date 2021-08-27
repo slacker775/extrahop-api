@@ -1,0 +1,35 @@
+{
+  "name": "slacker775/extrahop-api",
+  "description": "PHP library for ExtraHop API",
+  "minimum-stability": "stable",
+  "license": "MIT",
+  "authors": [
+    {
+      "name": "dhollis",
+      "email": "slacker775@gmail.com"
+    }
+  ],
+  "autoload": {
+    "psr-4": {
+      "ExtraHop\\Api\\": "generated/"
+    }
+  },
+  "require": {
+    "jane-php/open-api-runtime": "~6.3.0",
+    "league/oauth2-client": "^2.6"
+  },
+  "require-dev": {
+    "symfony/flex": "^v1.0",
+    "friendsofphp/php-cs-fixer": "^3.0",
+    "jane-php/open-api-3": "~6.3.0",
+    "php-http/guzzle6-adapter": "^2.0",
+    "nyholm/psr7": "^1.4",
+    "monolog/monolog": "^2.3",
+    "php-http/logger-plugin": "^1.2"
+  },
+  "extra": {
+    "symfony": {
+      "allow-contrib": "true"
+    }
+  }
+}
