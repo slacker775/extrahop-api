@@ -7,7 +7,7 @@ externalDocs:
   description: Find out more about Swagger
   url: https://docs.extrahop.com/current/rx360-rest-api
 servers:
-  - url: https://{customerId}.api.cloud.extrahop.com/api/v1
+  - url: https://{customerId}.api.cloud.extrahop.com
     variables:
       customerId:
         default: demo
@@ -47,7 +47,7 @@ security:
   - oauth:
       - auth
 paths:
-  /activitymaps:
+  /api/v1/activitymaps:
     get:
       tags:
         - activitymap
@@ -62,7 +62,7 @@ paths:
                 type: array
                 items:
                   $ref: '#/components/schemas/ActivityMap'
-  /dashboards:
+  /api/v1/dashboards:
     get:
       tags:
         - dashboard
@@ -77,7 +77,7 @@ paths:
                 type: array
                 items:
                   $ref: '#/components/schemas/Dashboard'
-  /dashboards/{id}:
+  /api/v1/dashboards/{id}:
     get:
       tags:
         - dashboard
@@ -96,7 +96,9 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Dashboard'
-  /detections:
+        404:
+          $ref: '#/components/responses/NotFound'
+  /api/v1/detections:
     get:
       tags:
         - detection
@@ -106,7 +108,7 @@ paths:
         - name: limit
           in: query
           schema:
-            type: number
+            type: integer
       responses:
         200:
           description: Success
@@ -116,19 +118,19 @@ paths:
                 type: array
                 items:
                   $ref: '#/components/schemas/Detection'
-  /detections/{id}:
+  /api/v1/detections/{id}:
+    parameters:
+      - name: id
+        in: path
+        description: ID of detection
+        required: true
+        schema:
+          type: integer
     get:
       tags:
         - detection
       summary: Retrieve a specific detection
       operationId: getDetection
-      parameters:
-        - name: id
-          in: path
-          description: ID of detection to retrieve
-          required: true
-          schema:
-            type: integer
       responses:
         200:
           description: Success
@@ -136,7 +138,54 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Detection'
-  /detections/formats:
+        404:
+          $ref: '#/components/responses/NotFound'
+    patch:
+      tags:
+        - detection
+      summary: Update a detection.
+      operationId: updateDetection
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Detection'
+      responses:
+        200:
+          description: Success
+  /ap1/v1/detections/{id}/notes:
+    parameters:
+      - name: id
+        in: path
+        description: ID of detection to retrieve
+        required: true
+        schema:
+          type: integer
+    get:
+      tags:
+        - detection
+      summary: Retrieve the notes for a given detection.
+      operationId: getDetectionNotes
+      responses:
+        200:
+          description: Success
+    put:
+      tags:
+        - detection
+      summary: Create or replace notes for a given detection.
+      operationId: updateDetectionNotes
+      responses:
+        200:
+          description: Success
+    delete:
+      tags:
+        - detection
+      summary: Delete the notes for a given detection.
+      operationId: deleteDetectionNotes
+      responses:
+        200:
+          description: Success
+  /api/v1/detections/formats:
     get:
       tags:
         - detection
@@ -151,7 +200,39 @@ paths:
                 type: array
                 items:
                   $ref: '#/components/schemas/DetectionFormat'
-  /detections/rules/hiding:
+    post:
+      tags:
+        - detection
+      summary: Create a new detection format.
+      operationId: createDetectionFormat
+      responses:
+        200:
+          description: Success
+    patch:
+      tags:
+        - detection
+      summary: Update a specific detection format
+      operationId: updateDetectionFormat
+      responses:
+        200:
+          description: Success
+  /api/v1/detections/formats/{id}:
+    delete:
+      tags:
+        - detection
+      summary: Delete a specific detection format.
+      operationId: deleteDetectionFormat
+      parameters:
+        - name: id
+          in: path
+          description: ID of detection format to delete
+          required: true
+          schema:
+            type: integer
+      responses:
+        200:
+          description: Success
+  /api/v1/detections/rules/hiding:
     get:
       tags:
         - detection
@@ -166,7 +247,74 @@ paths:
                 type: array
                 items:
                   $ref: '#/components/schemas/DetectionRulesHiding'
-  /devicegroups:
+    post:
+      tags:
+        - detection
+      summary: Create a new detection hiding rule.
+      operationId: createDetectionHidingRule
+      responses:
+        200:
+          description: Success
+  /api/v1/detections/rules/hiding/{id}:
+    parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: integer
+    delete:
+      tags:
+        - detection
+      summary: Delete a detection hiding rule.
+      operationId: deleteDetectionHidingRule
+      responses:
+        200:
+          description: Success
+    patch:
+      tags:
+        - detection
+      summary: Update a detection hiding rule.
+      operationId: updateDetectionHidingRule
+      responses:
+        200:
+          description: Success
+  /ap1/v1/detections/search:
+    post:
+      tags:
+        - detection
+      summary: Retrieve detections that match the specified search criteria.
+      operationId: searchDetections
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DetectionSearch'
+      responses:
+        200:
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Detection'
+        404:
+          $ref: '#/components/responses/NotFound'
+  /ap1/v1/detections/tickets:
+    patch:
+      tags:
+        - detection
+      summary: Update a ticket associated with detections.
+      operationId: updateDetectionTicket
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DetectionTicket'
+      responses:
+        200:
+          description: Success
+  /api/v1/devicegroups:
     get:
       tags:
         - devicegroup
@@ -201,7 +349,7 @@ paths:
                 type: array
                 items:
                   $ref: '#/components/schemas/DeviceGroup'
-  /devicegroups/{id}/devices:
+  /api/v1/devicegroups/{id}/devices:
     get:
       tags:
         - devicegroup
@@ -238,7 +386,7 @@ paths:
                 type: array
                 items:
                   $ref: '#/components/schemas/Device'
-  /devices:
+  /api/v1/devices:
     get:
       tags:
         - device
@@ -265,6 +413,19 @@ paths:
           in: query
           schema:
             type: string
+            enum:
+              - any
+              - name
+              - discovery_id
+              - ip_address
+              - mac_address
+              - vendor
+              - type
+              - tag
+              - activity
+              - node
+              - vlan
+              - discover_time
         - name: value
           in: query
           schema:
@@ -278,12 +439,65 @@ paths:
                 type: array
                 items:
                   $ref: '#/components/schemas/Device'
-  /devices/{id}:
+  /api/v1/devices/search:
+    post:
+      tags:
+        - device
+      summary: Retrieve all devices that match specific criteria.
+      operationId: searchDevices
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DeviceSearch'
+      responses:
+        200:
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Device'
+  /api/v1/devices/{id}:
+    parameters:
+      - name: id
+        in: path
+        description: ID of device to retrieve
+        required: true
+        schema:
+          type: integer
     get:
       tags:
         - device
       summary: Retrieve a specific device
       operationId: getDevice
+      responses:
+        200:
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Device'
+    patch:
+      tags:
+        - device
+      summary: Update an existing device
+      operationId: updateDevice
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Device'
+      responses:
+        200:
+          description: Success
+  /api/v1/devices/{id}/dnsnames:
+    get:
+      tags:
+        - device
+      summary: Retrieve all DNS names that are associated with a specific device.
+      operationId: getDeviceDnsNames
       parameters:
         - name: id
           in: path
@@ -297,28 +511,28 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Device'
-    patch:
+                $ref: '#/components/schemas/DnsNameResponse'
+  /api/v1/devices/{id}/ipaddrs:
+    get:
       tags:
         - device
-      summary: Update an existing device
-      operationId: updateDevice
+      summary: Retrieve all IP addresses that were associated with a specific device within a given time period.
+      operationId: getDeviceIpAddrs
       parameters:
         - name: id
           in: path
-          description: ID of device to update
+          description: ID of device to retrieve
           required: true
           schema:
             type: integer
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/Device'
       responses:
         200:
           description: Success
-  /devices/{id}/software:
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/IpAddressResponse'
+  /api/v1/devices/{id}/software:
     get:
       tags:
         - device
@@ -349,7 +563,47 @@ paths:
                 type: array
                 items:
                   $ref: '#/components/schemas/Software'
-  /networks:
+  /api/v1/metrics:
+    post:
+      tags:
+        - metrics
+      summary: Perform a metric query.
+      operationId: getMetrics
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/MetricRequest'
+      responses:
+        200:
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/MetricResponse'
+  /api/v1/metrics/total:
+    post:
+      tags:
+        - metrics
+      summary: Perform a metric query for total values.
+      operationId: getMetricTotals
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/MetricRequest'
+      responses:
+        200:
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/MetricResponse'
+  /api/v1/networks:
     get:
       tags:
         - network
@@ -364,7 +618,7 @@ paths:
                 type: array
                 items:
                   $ref: '#/components/schemas/Network'
-  /networks/{id}:
+  /api/v1/networks/{id}:
     get:
       tags:
         - network
@@ -383,7 +637,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Network'
-  /software:
+  /api/v1/software:
     get:
       tags:
         - software
@@ -411,7 +665,7 @@ paths:
                 type: array
                 items:
                   $ref: '#/components/schemas/Software'
-  /software/{id}:
+  /api/v1/software/{id}:
     get:
       tags:
         - software
@@ -430,7 +684,122 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Software'
-  /vlans:
+  /api/v1/tags:
+    get:
+      tags:
+        - tag
+      summary: Retrieve all tags.
+      operationId: getTags
+      responses:
+        200:
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Tag'
+    post:
+      tags:
+        - tag
+      summary: Create a a new tag.
+      operationId: createTag
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Tag'
+      responses:
+        200:
+          description: Success
+  /ap1/v1/tags/{id}:
+    parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: integer
+    get:
+      tags:
+        - tag
+      summary: Retrieve a specific tag.
+      operationId: getTag
+      responses:
+        200:
+          description: Success
+    patch:
+      tags:
+        - tag
+      summary: Apply updates to a specific tag.
+      operationId: updateTag
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Tag'
+      responses:
+        200:
+          description: Success
+    delete:
+      tags:
+        - tag
+      summary: Delete a specific tag.
+      operationId: deleteTag
+      responses:
+        200:
+          description: Success
+  /api/v1/tags/{id}/devices:
+    parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: integer
+    get:
+      tags:
+        - tag
+      summary: Retrieve all devices that are assigned to a specific tag.
+      operationId: getDevicesWithTag
+      responses:
+        200:
+          description: Success
+    post:
+      tags:
+        - tag
+      summary: Assign and unassign specific tag to devices
+      operationId: updateDeviceTags
+      responses:
+        200:
+          description: Success
+  /api/v1/tags/{id}/devices/{deviceId}:
+    parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: integer
+      - name: deviceId
+        in: path
+        required: true
+        schema:
+          type: integer
+    post:
+      tags:
+        - tag
+      summary: Assign a device to a specific tag
+      operationId: assignDeviceToTag
+      responses:
+        200:
+          description: Success
+    delete:
+      tags:
+        - tag
+      summary: Unassign a device from a specific tag.
+      operationId: unassignDeviceFromTag
+      responses:
+        200:
+          description: Success
+  /api/v1/vlans:
     get:
       tags:
         - vlan
@@ -445,7 +814,7 @@ paths:
                 type: array
                 items:
                   $ref: '#/components/schemas/Vlan'
-  /vlans/{id}:
+  /api/v1/vlans/{id}:
     get:
       tags:
         - vlan
@@ -465,7 +834,22 @@ paths:
               schema:
                 $ref: '#/components/schemas/Vlan'
 components:
+  responses:
+    NotFound:
+      description: The specified resource was not found
+      content:
+        application/problem+json:
+          schema:
+            $ref: '#/components/schemas/Error'
   schemas:
+    Error:
+      type: object
+      properties:
+        type:
+          type: string
+        detail:
+          type: string
+          nullable: true
     ActivityMap:
       type: object
       properties:
@@ -648,6 +1032,87 @@ components:
         create_time:
           type: integer
           nullable: true
+    DetectionSearch:
+      type: object
+      properties:
+        filter:
+          type: object
+          properties:
+            category:
+              nullable: true
+              type: string
+            assignee:
+              type: array
+              nullable: true
+              items:
+                type: string
+            ticket_id:
+              type: array
+              nullable: true
+              items:
+                type: string
+            status:
+              type: array
+              nullable: true
+              items:
+                type: string
+                enum:
+                  - new
+                  - in_progress
+                  - closed
+                  - acknowledged
+            resolution:
+              type: array
+              nullable: true
+              items:
+                type: string
+        from:
+          type: integer
+          nullable: true
+        limit:
+          type: integer
+          nullable: true
+        offset:
+          type: integer
+          nullable: true
+        sort:
+          type: object
+          properties:
+            direction:
+              type: string
+              nullable: true
+              enum:
+                - asc
+                - desc
+            field:
+              type: string
+              nullable: true
+        until:
+          type: integer
+          nullable: true
+        update_time:
+          type: integer
+          nullable: true
+    DetectionTicket:
+      type: object
+      properties:
+        ticket_id:
+          type: string
+        assignee:
+          type: string
+          nullable: true
+        status:
+          type: string
+          enum:
+            - new
+            - in_progress
+            - closed
+            - acknowledged
+        resolution:
+          type: string
+          enum:
+            - action_taken
+            - no_action_taken
     Device:
       type: object
       properties:
@@ -790,6 +1255,204 @@ components:
           type: boolean
         mod_time:
           type: integer
+    DeviceSearch:
+      type: object
+      properties:
+        active_from:
+          type: integer
+          nullable: true
+        active_until:
+          type: integer
+          nullable: true
+        limit:
+          type: integer
+          nullable: true
+        offset:
+          type: integer
+          nullable: true
+        filter:
+          type: object
+          properties:
+            field:
+              type: string
+              enum:
+                - name
+                - discovery_id
+                - ipaddr
+                - macaddr
+                - vendor
+                - tag
+                - activity
+                - node
+                - vlan
+                - discover_time
+                - role
+                - dns_name
+                - dhcp_name
+                - netbios_name
+                - cdp_name
+                - custom_name
+                - software
+                - model
+                - is_critical
+                - instance_id
+                - instance_name
+                - instance_type
+                - cloud_account
+                - vpc_id
+                - subnet_id
+                - is_active
+            operator:
+              type: string
+              enum:
+                - >
+                - <
+                - <=
+                - '>='
+                - =
+                - '!='
+                - startswith
+                - and
+                - or
+                - not
+                - exists
+                - not_exists
+                - ~
+                - '!~'
+            operand:
+              type: string
+            rules:
+              type: array
+              nullable: true
+              items:
+                type: string
+    DnsName:
+      type: object
+      properties:
+        dns_name:
+          type: string
+        last_observation_time:
+          type: string
+    DnsNameResponse:
+      type: object
+      properties:
+        current_dns_names:
+          type: array
+          items:
+            type: string
+        dns_names:
+          type: array
+          items:
+            $ref: '#/components/schemas/DnsName'
+    IpAddress:
+      type: object
+      properties:
+        ipaddr:
+          type: string
+        last_observation_time:
+          type: integer
+    IpAddressResponse:
+      type: object
+      properties:
+        associated_ipaddrs:
+          type: array
+          items:
+            type: string
+        current_ipaddrs:
+          type: array
+          items:
+            type: string
+        ipaddrs:
+          type: array
+          items:
+            $ref: '#/components/schemas/IpAddress'
+    MetricRequest:
+      type: object
+      properties:
+        cycle:
+          type: string
+          enum:
+            - auto
+            - 1sec
+            - 30sec
+            - 5min
+            - 1hr
+            - 24hr
+        from:
+          type: integer
+        metric_category:
+          type: string
+        metric_specs:
+          type: array
+          items:
+            $ref: '#/components/schemas/MetricSpec'
+        object_ids:
+          type: array
+          items:
+            type: integer
+        object_type:
+          type: string
+          enum:
+            - network
+            - device
+            - application
+            - vlan
+            - device_group
+            - system
+        until:
+          type: integer
+    MetricResponse:
+      type: object
+      properties:
+        stats:
+          type: array
+          items:
+            $ref: '#/components/schemas/MetricStats'
+        cycle:
+          type: string
+        node_id:
+          type: integer
+        clock:
+          type: integer
+        from:
+          type: integer
+        until:
+          type: integer
+    MetricSpec:
+      type: object
+      properties:
+        name:
+          type: string
+        key1:
+          type: string
+          nullable: true
+        key2:
+          type: string
+          nullable: true
+        calc_type:
+          type: string
+          nullable: true
+          enum:
+            - mean
+            - percentiles
+        percentiles:
+          type: array
+          nullable: true
+          items:
+            type: number
+    MetricStats:
+      type: object
+      properties:
+        oid:
+          type: integer
+        time:
+          type: integer
+        duration:
+          type: integer
+        values:
+          type: array
+          items:
+            type: integer
     Network:
       type: object
       properties:
@@ -826,6 +1489,17 @@ components:
           nullable: true
         software_type:
           type: string
+          nullable: true
+    Tag:
+      type: object
+      properties:
+        id:
+          type: integer
+          nullable: true
+        name:
+          type: string
+        mod_time:
+          type: integer
           nullable: true
     Vlan:
       type: object
