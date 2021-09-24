@@ -637,6 +637,36 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Network'
+  /api/v1/observations/associatedipaddrs:
+    post:
+      tags:
+        - observation
+      summary: Add an observation to create an association between device IP addresses.
+      operationId: addDeviceIpAddrObservation
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                source:
+                  type: string
+                  description: The source of the observations
+                observations:
+                  type: object
+                  properties:
+                    ipaddr:
+                      type: string
+                      description: The device IP address observed by the ExtraHop system.
+                    associated_ipaddr:
+                      type: string
+                      description: The associated IP address.
+                    timestamp:
+                      type: integer
+                      description: The time that the observation was created by the source, expressed in milliseconds since the epoch.
+      responses:
+        200:
+          description: Success
   /api/v1/software:
     get:
       tags:
@@ -763,6 +793,12 @@ paths:
       responses:
         200:
           description: Success
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Device'
     post:
       tags:
         - tag
@@ -796,6 +832,270 @@ paths:
         - tag
       summary: Unassign a device from a specific tag.
       operationId: unassignDeviceFromTag
+      responses:
+        200:
+          description: Success
+  /api/v1/triggers:
+    get:
+      tags:
+        - trigger
+      summary: Retrieve all Triggers
+      operationId: getTriggers
+      responses:
+        200:
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Trigger'
+    post:
+      tags:
+        - trigger
+      summary: Create a new trigger
+      operationId: createTrigger
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Trigger'
+      responses:
+        200:
+          description: Success
+  /api/v1/triggers/{id}:
+    parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: integer
+    get:
+      tags:
+        - trigger
+      summary: Retrieve a specific trigger by unique identifier.
+      operationId: getTrigger
+      responses:
+        200:
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Trigger'
+    delete:
+      tags:
+        - trigger
+      summary: Delete a specific identifier.
+      operationId: deleteTrigger
+      responses:
+        200:
+          description: Success
+    patch:
+      tags:
+        - trigger
+      summary: Update an existing trigger.
+      operationId: updateTrigger
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Trigger'
+      responses:
+        204:
+          description: Success
+  /api/v1/triggers/{id}/devicegroups:
+    parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: integer
+    get:
+      tags:
+        - trigger
+      summary: Retrieve all device groups that are assigned to a specific trigger.
+      operationId: getTriggerDeviceGroups
+      responses:
+        200:
+          description: Success
+    post:
+      tags:
+        - trigger
+      summary: Assign and unassign a specific trigger to device groups.
+      operationId: updateTriggerDeviceGroups
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                assign:
+                  type: string
+                  nullable: true
+                unassign:
+                  type: string
+                  nullable: true
+      responses:
+        200:
+          description: Success
+  /api/v1/triggers/{id}/devicegroups/{child-id}:
+    parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: integer
+      - name: child-id
+        in: path
+        required: true
+        schema:
+          type: integer
+    delete:
+      tags:
+        - trigger
+      summary: Unassign a device group from a specific trigger.
+      operationId: deleteTriggerDeviceGroup
+      responses:
+        200:
+          description: Success
+    post:
+      tags:
+        - trigger
+      summary: Assign a device group to a specific trigger.
+      operationId: addTriggerDeviceGroup
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                assign:
+                  type: string
+                  nullable: true
+                unassign:
+                  type: string
+                  nullable: true
+      responses:
+        200:
+          description: Success
+  /api/v1/triggers/{id}/devices:
+    parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: integer
+    get:
+      tags:
+        - trigger
+      summary: Retrieve all devices that are assigned to a specific trigger.
+      operationId: getTriggerDevices
+      responses:
+        200:
+          description: Success
+    post:
+      tags:
+        - trigger
+      summary: Assign and unassign a specific trigger to devices.
+      operationId: updateTriggerDevices
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                assign:
+                  type: string
+                  nullable: true
+                unassign:
+                  type: string
+                  nullable: true
+      responses:
+        200:
+          description: Success
+  /api/v1/triggers/{id}/devices/{child-id}:
+    parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: integer
+      - name: child-id
+        in: path
+        required: true
+        schema:
+          type: integer
+    delete:
+      tags:
+        - trigger
+      summary: Unassign a device from a specific trigger.
+      operationId: deleteTriggerDevice
+      responses:
+        200:
+          description: Success
+    post:
+      tags:
+        - trigger
+      summary: Assign a device to a specific trigger.
+      operationId: addTriggerDevice
+      responses:
+        200:
+          description: Success
+  /api/v1/watchlist/devices:
+    get:
+      tags:
+        - watchlist
+      summary: Retrieve all devices that are in the watchlist.
+      operationId: getWatchlistDevices
+      responses:
+        200:
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Device'
+    post:
+      tags:
+        - watchlist
+      summary: Add or remove devices from the watchlist.
+      operationId: updateWatchlistDevices
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                assign:
+                  type: string
+                  nullable: true
+                unassign:
+                  type: string
+                  nullable: true
+      responses:
+        200:
+          description: Success
+  /api/v1/watchlist/device/{id}:
+    parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: integer
+    delete:
+      tags:
+        - watchlist
+      summary: Remove a device from the watchlist.
+      operationId: deleteWatchlistDevice
+      responses:
+        200:
+          description: Success
+    post:
+      tags:
+        - watchlist
+      summary: Add a device to the watchlist.
+      operationId: addWatchlistDevice
       responses:
         200:
           description: Success
@@ -1501,6 +1801,89 @@ components:
         mod_time:
           type: integer
           nullable: true
+    Trigger:
+      type: object
+      properties:
+        id:
+          type: integer
+          nullable: true
+        apply_all:
+          type: boolean
+        author:
+          type: string
+        debug:
+          type: boolean
+        description:
+          type: string
+          nullable: true
+        disabled:
+          type: boolean
+        event:
+          type: string
+          nullable: true
+        events:
+          type: array
+          items:
+            type: string
+        hints:
+          type: array
+          items:
+            $ref: '#/components/schemas/TriggerHint'
+        mod_time:
+          type: integer
+          nullable: true
+        name:
+          type: string
+        script:
+          type: string
+    TriggerHint:
+      type: object
+      properties:
+        snaplen:
+          type: integer
+          nullable: true
+        payloadBytes:
+          type: integer
+          nullable: true
+        clipboardBytes:
+          type: integer
+          nullable: true
+        cycle:
+          type: string
+          nullable: true
+        metricTypes:
+          type: string
+          nullable: true
+        flowPayloadTurn:
+          type: boolean
+        flowClientPortMin:
+          type: integer
+          nullable: true
+        flowClientPortMax:
+          type: integer
+          nullable: true
+        flowClientBytes:
+          type: integer
+          nullable: true
+        flowClientString:
+          type: string
+          nullable: true
+        flowServerPortMin:
+          type: integer
+          nullable: true
+        flowServerPortMax:
+          type: integer
+          nullable: true
+        flowServerBytes:
+          type: integer
+          nullable: true
+        flowServerString:
+          type: string
+          nullable: true
+        flowUdpAll:
+          type: boolean
+        fireClassifyOnExpiration:
+          type: boolean
     Vlan:
       type: object
       properties:
