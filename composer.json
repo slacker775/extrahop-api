@@ -12,6 +12,7 @@
   "autoload": {
     "psr-4": {
       "ExtraHop\\Api\\Authentication\\": "src/Authentication",
+      "ExtraHop\\Api\\Factory\\": "src/Factory",
       "ExtraHop\\Api\\": "generated/"
     }
   },
