@@ -11,6 +11,7 @@
   ],
   "autoload": {
     "psr-4": {
+      "ExtraHop\\Api\\Authentication\\": "src/Authentication",
       "ExtraHop\\Api\\": "generated/"
     }
   },
@@ -22,7 +23,7 @@
     "symfony/flex": "^v1.0",
     "friendsofphp/php-cs-fixer": "^3.0",
     "jane-php/open-api-3": "~6.3.0",
-    "php-http/guzzle6-adapter": "^2.0",
+    "php-http/guzzle7-adapter": "^1.0",
     "nyholm/psr7": "^1.4",
     "monolog/monolog": "^2.3",
     "php-http/logger-plugin": "^1.2"

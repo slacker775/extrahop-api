@@ -2,7 +2,7 @@ openapi: 3.0.1
 info:
   title: ExtraHop Reveal(x) 360 API
   description: ''
-  version: 8.5.0
+  version: 8.6.0
 externalDocs:
   description: Find out more about Swagger
   url: https://docs.extrahop.com/current/rx360-rest-api
@@ -16,6 +16,7 @@ tags:
   - name: activitymap
   - name: alert
   - name: analysispriority
+  - name: appliance
   - name: application
   - name: bundle
   - name: dashboard
@@ -62,6 +63,176 @@ paths:
                 type: array
                 items:
                   $ref: '#/components/schemas/ActivityMap'
+  /api/v1/activitymaps/{id}:
+    get:
+      tags:
+        - activitymap
+      summary: Retrieve all activity maps
+      operationId: getActivityMap
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        200:
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ActivityMap'
+  /api/v1/appliances:
+    get:
+      tags:
+        - appliance
+      summary: Retrieve all remote ExtraHop appliances connected to the local appliance.
+      operationId: getAppliances
+      responses:
+        200:
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Appliance'
+  /api/v1/appliances/{id}:
+    get:
+      tags:
+        - appliance
+      summary: Retrieve a specific remote ExtraHop appliance connected to the local appliance.
+      operationId: getAppliance
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        200:
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Appliance'
+  /api/v1/applications:
+    get:
+      tags:
+        - application
+      summary: Retrieve all applications that were active within a specific timeframe.
+      operationId: getApplications
+      parameters:
+        - name: active_from
+          in: query
+          schema:
+            type: integer
+        - name: active_until
+          in: query
+          schema:
+            type: integer
+        - name: limit
+          in: query
+          schema:
+            type: integer
+        - name: offset
+          in: query
+          schema:
+            type: integer
+        - name: search_type
+          in: query
+          schema:
+            type: string
+            enum:
+              - any
+              - name
+              - node
+              - discovery_id
+              - extrahop_id
+        - name: value
+          in: query
+          schema:
+            type: string
+      responses:
+        200:
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Application'
+    post:
+      tags:
+        - application
+      summary: Create a new application.
+      operationId: createApplication
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Application'
+      responses:
+        200:
+          description: Success
+  /api/v1/applications/{id}:
+    parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: integer
+    get:
+      tags:
+        - application
+      summary: Retreive a specific application.
+      operationId: getApplication
+      parameters:
+        - name: include_criteria
+          in: query
+          schema:
+            type: boolean
+      responses:
+        200:
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Application'
+    patch:
+      tags:
+        - application
+      summary: Update an existing application.
+      operationId: updateApplication
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Application'
+      responses:
+        200:
+          description: Success
+  /api/v1/applications/{id}/activity:
+    parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: integer
+    get:
+      tags:
+        - application
+      summary: Retrieve all activity for a specific application
+      operationId: getApplicationActivity
+      responses:
+        200:
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/ApplicationActivity'
   /api/v1/dashboards:
     get:
       tags:
@@ -1185,6 +1356,117 @@ components:
           nullable: true
         mod_time:
           type: integer
+    Appliance:
+      type: object
+      properties:
+        id:
+          type: integer
+        add_time:
+          type: integer
+          nullable: true
+        advanced_analysis_capacity:
+          type: boolean
+        analysis_levels_managed:
+          type: boolean
+        connection_type:
+          type: string
+        data_access:
+          type: boolean
+        display_name:
+          type: string
+        fingerprint:
+          type: string
+        firmware_version:
+          type: string
+        hostname:
+          type: string
+        license_status:
+          type: string
+        managed_by_local:
+          type: boolean
+        manages_local:
+          type: boolean
+        nickname:
+          type: string
+        platform:
+          type: string
+        status_message:
+          type: string
+        sync_time:
+          type: string
+          format: date-time
+        total_capacity:
+          type: integer
+        uuid:
+          type: string
+    Application:
+      type: object
+      properties:
+        id:
+          type: integer
+        criteria:
+          type: array
+          items:
+            $ref: '#/components/schemas/ApplicationCriteria'
+        description:
+          type: string
+        discovery_id:
+          type: string
+        display_name:
+          type: string
+        extrahop_id:
+          type: string
+        mod_time:
+          type: integer
+        node_id:
+          type: integer
+        user_mod_time:
+          type: integer
+    ApplicationActivity:
+      type: object
+      properties:
+        id:
+          type: integer
+        application_id:
+          type: integer
+        from_time:
+          type: integer
+        until_time:
+          type: integer
+        stat_name:
+          type: string
+        mod_time:
+          type: integer
+    ApplicationCriteria:
+      type: object
+      properties:
+        protocol_default:
+          type: string
+          enum:
+            - any
+            - none
+        sources:
+          type: array
+          items:
+            $ref: '#/components/schemas/ApplicationSource'
+        protocols:
+          type: array
+          items:
+            $ref: '#/components/schemas/ApplicationProtocol'
+    ApplicationProtocol:
+      type: object
+      additionalProperties:
+        type: string
+    ApplicationSource:
+      type: object
+      properties:
+        id:
+          type: integer
+        type:
+          type: string
+          enum:
+            - device
+            - device_group
     Dashboard:
       type: object
       properties:
@@ -1237,15 +1519,15 @@ components:
         mitre_tactics:
           type: array
           items:
-            type: string
+            $ref: '#/components/schemas/DetectionMitreTactic'
         mitre_techniques:
           type: array
           items:
-            type: string
+            $ref: '#/components/schemas/DetectionMitreTechnique'
         participants:
           type: array
           items:
-            type: string
+            $ref: '#/components/schemas/DetectionParticipant'
         properties:
           type: array
           items:
@@ -1298,6 +1580,41 @@ components:
         type:
           type: string
           nullable: true
+    DetectionMitreTactic:
+      type: object
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        url:
+          type: string
+    DetectionMitreTechnique:
+      type: object
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        url:
+          type: string
+        legacy_ids:
+          type: array
+          items:
+            type: string
+    DetectionParticipant:
+      type: object
+      properties:
+        id:
+          type: integer
+        object_type:
+          type: string
+        object_id:
+          type: integer
+        role:
+          type: string
+        external:
+          type: boolean
     DetectionRulesHiding:
       type: object
       properties:
