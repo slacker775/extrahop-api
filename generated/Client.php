@@ -356,8 +356,8 @@ class Client extends \ExtraHop\Api\Runtime\Client\Client
      * 
      *
      * @param array $queryParameters {
-     *     @var float $active_from 
-     *     @var float $active_until 
+     *     @var int $active_from 
+     *     @var int $active_until 
      *     @var int $limit 
      *     @var int $offset 
      *     @var string $search_type 

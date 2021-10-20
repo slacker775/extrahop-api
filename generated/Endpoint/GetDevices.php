@@ -8,8 +8,8 @@ class GetDevices extends \ExtraHop\Api\Runtime\Client\BaseEndpoint implements \E
      * 
      *
      * @param array $queryParameters {
-     *     @var float $active_from 
-     *     @var float $active_until 
+     *     @var int $active_from 
+     *     @var int $active_until 
      *     @var int $limit 
      *     @var int $offset 
      *     @var string $search_type 
@@ -43,8 +43,8 @@ class GetDevices extends \ExtraHop\Api\Runtime\Client\BaseEndpoint implements \E
         $optionsResolver->setDefined(array('active_from', 'active_until', 'limit', 'offset', 'search_type', 'value'));
         $optionsResolver->setRequired(array());
         $optionsResolver->setDefaults(array());
-        $optionsResolver->setAllowedTypes('active_from', array('float'));
-        $optionsResolver->setAllowedTypes('active_until', array('float'));
+        $optionsResolver->setAllowedTypes('active_from', array('int'));
+        $optionsResolver->setAllowedTypes('active_until', array('int'));
         $optionsResolver->setAllowedTypes('limit', array('int'));
         $optionsResolver->setAllowedTypes('offset', array('int'));
         $optionsResolver->setAllowedTypes('search_type', array('string'));

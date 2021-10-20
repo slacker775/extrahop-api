@@ -567,11 +567,11 @@ paths:
         - name: active_from
           in: query
           schema:
-            type: number
+            type: integer
         - name: active_until
           in: query
           schema:
-            type: number
+            type: integer
         - name: limit
           in: query
           schema:
