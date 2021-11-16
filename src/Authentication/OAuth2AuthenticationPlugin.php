@@ -2,7 +2,7 @@
 
 namespace ExtraHop\Api\Authentication;
 
-use Jane\OpenApiRuntime\Client\AuthenticationPlugin;
+use Jane\Component\OpenApiRuntime\Client\AuthenticationPlugin;
 use League\OAuth2\Client\OptionProvider\HttpBasicAuthOptionProvider;
 use League\OAuth2\Client\Provider\AbstractProvider;
 use League\OAuth2\Client\Provider\GenericProvider;
